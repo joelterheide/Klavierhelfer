@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Klavierhelfer – Noten mit Fingersatz, Wasserfall und Video</title>
+<meta name="description" content="Notendatei hochladen und sofort sehen, welcher Finger welche Taste spielt: Notenbild, fallende Noten, Klavierklang und Video-Export.">
+<meta name="theme-color" content="#0f1420">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f1420'/%3E%3Crect x='10' y='14' width='44' height='36' rx='4' fill='%23fff'/%3E%3Cg fill='%230f1420'%3E%3Crect x='18' y='14' width='6' height='21' rx='1'/%3E%3Crect x='29' y='14' width='6' height='21' rx='1'/%3E%3Crect x='40' y='14' width='6' height='21' rx='1'/%3E%3C/g%3E%3Crect x='10' y='8' width='9' height='14' rx='3' fill='%234f8ef7'/%3E%3Crect x='45' y='4' width='9' height='18' rx='3' fill='%23f39c38'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="kopf">
+  <div class="marke">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#0f1420"/><rect x="10" y="14" width="44" height="36" rx="4" fill="#fff"/><g fill="#0f1420"><rect x="18" y="14" width="6" height="21" rx="1"/><rect x="29" y="14" width="6" height="21" rx="1"/><rect x="40" y="14" width="6" height="21" rx="1"/></g><rect x="10" y="8" width="9" height="14" rx="3" fill="#4f8ef7"/><rect x="45" y="4" width="9" height="18" rx="3" fill="#f39c38"/></svg>
+    <div>
+      <h1>Klavierhelfer</h1>
+      <p>Noten laden, Fingersatz sehen, mitspielen</p>
+    </div>
+  </div>
+  <div class="kopf-aktionen">
+    <label class="knopf primaer" for="datei">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0-12 4.5 4.5M12 3 7.5 7.5M4 15v3a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-3"/></svg>
+      <span class="txt-voll">Stück öffnen</span><span class="txt-kurz">Öffnen</span>
+    </label>
+    <input type="file" id="datei" accept=".musicxml,.xml,.mxl,.mid,.midi" hidden>
+    <select id="beispiel" class="auswahl" aria-label="Beispielstück wählen">
+      <option value="">Beispiele …</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <section class="stueck">
+    <div>
+      <h2 id="titel">Wird geladen …</h2>
+      <p id="untertitel" class="leise"></p>
+    </div>
+    <div class="legende" aria-label="Farben">
+      <span><i class="punkt rechts"></i>rechte Hand</span>
+      <span><i class="punkt links"></i>linke Hand</span>
+      <span class="leise">Zahl = Finger (1 Daumen … 5 kleiner Finger)</span>
+      <span class="leise tipp">Pause + Note im Wasserfall antippen = Finger ändern</span>
+    </div>
+  </section>
+
+  <section id="noten-karte" class="karte noten-karte">
+    <div id="noten" class="noten" aria-label="Notenbild"></div>
+    <div id="noten-hinweis" class="noten-hinweis" hidden>
+      Für MIDI-Dateien gibt es kein Notenbild. Wasserfall, Fingersatz und Klang funktionieren trotzdem.
+      Für Noten mit Fingersatz eine MusicXML-Datei öffnen.
+    </div>
+  </section>
+
+  <section id="wasserfall-karte" class="karte wasserfall-karte">
+    <canvas id="wasserfall" aria-label="Fallende Noten über der Klaviatur. Die Zahl in jedem Balken ist der Finger."></canvas>
+    <div id="warte-hinweis" class="warte-hinweis" hidden>Spiele die grün markierten Tasten</div>
+  </section>
+
+  <section class="hilfe karte">
+    <details open>
+      <summary>So funktioniert der Klavierhelfer</summary>
+      <div class="hilfe-raster">
+        <div>
+          <h3>1. Noten öffnen</h3>
+          <p>Am besten eine <b>MusicXML-Datei</b> (.musicxml, .xml oder .mxl). Die gibt es kostenlos bei vielen Notenseiten, und jedes Notenprogramm kann sie speichern, zum Beispiel <a href="https://musescore.org/de" target="_blank" rel="noopener">MuseScore</a> über <i>Datei → Exportieren → MusicXML</i>. MIDI-Dateien gehen auch, dann ohne Notenbild.</p>
+          <p class="leise">Nur ein PDF oder Foto? MuseScore kann PDFs in Noten umwandeln (<i>Datei → PDF importieren</i>). Danach als MusicXML speichern und hier öffnen.</p>
+        </div>
+        <div>
+          <h3>2. Üben</h3>
+          <p>Der Fingersatz wird automatisch berechnet. Fingersätze, die schon in der Datei stehen, bleiben erhalten. Stimmt ein Finger nicht: <b>Pause</b>, dann die Note im Wasserfall antippen. Die folgenden Finger passen sich an, und deine Änderungen bleiben in diesem Browser gespeichert.</p>
+          <p>Unter <b>Takte üben</b> wiederholst du schwierige Stellen, das <b>Tempo</b> lässt sich verlangsamen. In den Einstellungen kannst du einzelne Hände ausblenden oder stumm schalten.</p>
+        </div>
+        <div>
+          <h3>3. Video speichern</h3>
+          <p>Unter <b>Video</b> entsteht ein Film mit fallenden Noten, Fingersatz, mitlaufender Notenzeile und Klang, wahlweise im Hochformat fürs Handy. Die Aufnahme läuft in Echtzeit, der Tab muss dabei geöffnet bleiben.</p>
+          <p class="leise">Tastatur: Leertaste = Start/Pause, ← → = Takt zurück/vor, Pos1 = Anfang, + / − = Tempo.</p>
+        </div>
+      </div>
+    </details>
+    <p class="fuss leise">Notensatz: <a href="https://opensheetmusicdisplay.org" target="_blank" rel="noopener">OpenSheetMusicDisplay</a> (BSD-Lizenz) · Klavierklang: Salamander Grand Piano von Alexander Holm (<a href="https://creativecommons.org/licenses/by/3.0/deed.de" target="_blank" rel="noopener">CC BY 3.0</a>) · Der Fingersatz ist ein Vorschlag, kein Ersatz für Klavierunterricht. Alle Dateien bleiben auf deinem Gerät.</p>
+  </section>
+</main>
+
+<div class="transport" role="toolbar" aria-label="Wiedergabe">
+  <div class="transport-innen">
+    <div class="gruppe">
+      <button id="anfang" class="rund" title="Zum Anfang (Pos1)" aria-label="Zum Anfang">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14M19 5 9 12l10 7z"/></svg>
+      </button>
+      <button id="spielen" class="rund gross" title="Start/Pause (Leertaste)" aria-label="Abspielen">
+        <svg class="ikon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+        <svg class="ikon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <div class="gruppe fortschritt">
+      <input type="range" id="position" min="0" max="1000" value="0" step="1" aria-label="Position im Stück">
+      <div class="zeitzeile"><span id="takt-anzeige">Takt 1</span><span id="zeit">0:00 / 0:00</span></div>
+    </div>
+    <div class="gruppe tempo">
+      <label for="tempo">Tempo</label>
+      <input type="range" id="tempo" min="25" max="150" step="5" value="100">
+      <output id="tempo-wert" for="tempo">100 %</output>
+    </div>
+    <div class="gruppe">
+      <button id="schleife-knopf" class="knopf klein" aria-pressed="false" title="Takte wiederholen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3"/></svg>
+        <span class="txt">Takte üben</span>
+      </button>
+      <span id="schleife-felder" class="schleife-felder" hidden>
+        <label>von <input type="number" id="von" min="1" value="1" inputmode="numeric"></label>
+        <label>bis <input type="number" id="bis" min="1" value="4" inputmode="numeric"></label>
+      </span>
+    </div>
+    <div class="gruppe rechts">
+      <button id="video-knopf" class="knopf klein" title="Video erstellen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/></svg>
+        <span class="txt">Video</span>
+      </button>
+      <button id="einstellungen-knopf" class="rund" title="Einstellungen" aria-label="Einstellungen">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<dialog id="einstellungen" class="dialog">
+  <form method="dialog" class="dialog-kopf"><h2>Einstellungen</h2><button class="rund" aria-label="Schließen">✕</button></form>
+  <div class="dialog-inhalt">
+    <fieldset>
+      <legend>Ansicht</legend>
+      <label class="zeile">Anzeige
+        <select id="ansicht" class="auswahl">
+          <option value="beides">Noten und Wasserfall</option>
+          <option value="wasserfall">Nur Wasserfall</option>
+          <option value="noten">Nur Noten</option>
+        </select>
+      </label>
+      <label class="zeile">Hände anzeigen
+        <select id="haende" class="auswahl">
+          <option value="beide">Beide Hände</option>
+          <option value="R">Nur rechte Hand</option>
+          <option value="L">Nur linke Hand</option>
+        </select>
+      </label>
+      <label class="zeile">Fallgeschwindigkeit
+        <select id="vorschau" class="auswahl">
+          <option value="4.5">langsam (viel Vorschau)</option>
+          <option value="3" selected>mittel</option>
+          <option value="2">schnell</option>
+        </select>
+      </label>
+      <label class="zeile">Tastennamen
+        <select id="beschriftung" class="auswahl">
+          <option value="keine">keine</option>
+          <option value="c" selected>nur C-Tasten</option>
+          <option value="alle">alle weißen Tasten</option>
+        </select>
+      </label>
+    </fieldset>
+    <fieldset>
+      <legend>Klang</legend>
+      <label class="haken"><input type="checkbox" id="hoer-r" checked> Rechte Hand hören</label>
+      <label class="haken"><input type="checkbox" id="hoer-l" checked> Linke Hand hören</label>
+      <label class="haken" id="hoer-x-zeile" hidden><input type="checkbox" id="hoer-x" checked> Andere Stimmen hören</label>
+      <label class="haken"><input type="checkbox" id="metronom"> Metronom</label>
+      <label class="haken"><input type="checkbox" id="einzaehler"> Einzählen vor dem Start (ein Takt)</label>
+      <label class="zeile">Lautstärke <input type="range" id="lautstaerke" min="0" max="1" step="0.05" value="0.8"></label>
+    </fieldset>
+    <fieldset>
+      <legend>Fingersatz</legend>
+      <label class="haken"><input type="checkbox" id="fs-noten" checked> Im Notenbild anzeigen</label>
+      <label class="haken"><input type="checkbox" id="fs-wasserfall" checked> Im Wasserfall anzeigen</label>
+      <label class="zeile">Handgröße
+        <select id="handgroesse" class="auswahl">
+          <option value="klein">klein (Kinderhand)</option>
+          <option value="mittel" selected>mittel</option>
+          <option value="gross">groß</option>
+        </select>
+      </label>
+      <button id="fs-reset" class="knopf klein" type="button">Eigene Änderungen löschen</button>
+    </fieldset>
+    <fieldset>
+      <legend>MIDI-Keyboard</legend>
+      <p class="leise">Ein Digitalpiano per USB anschließen: Die gedrückten Tasten erscheinen lila. Im Warte-Modus hält das Stück an, bis du die richtigen Tasten spielst.</p>
+      <button id="midi-verbinden" class="knopf klein" type="button">Keyboard verbinden</button>
+      <span id="midi-status" class="leise"></span>
+      <label class="haken"><input type="checkbox" id="warte" disabled> Warte-Modus (für die angezeigte Hand)</label>
+      <label class="haken"><input type="checkbox" id="midi-hoeren"> Eigene Töne über den Browser hören</label>
+    </fieldset>
+  </div>
+</dialog>
+
+<dialog id="video-dialog" class="dialog breit">
+  <form method="dialog" class="dialog-kopf"><h2>Video erstellen</h2><button class="rund" aria-label="Schließen" id="v-schliessen">✕</button></form>
+  <div class="dialog-inhalt video-raster">
+    <div>
+      <label class="zeile">Format
+        <select id="v-format" class="auswahl"></select>
+      </label>
+      <label class="haken"><input type="checkbox" id="v-noten" checked> Mitlaufende Notenzeile oben</label>
+      <label class="haken"><input type="checkbox" id="v-einzaehler" checked> Einzählen am Anfang</label>
+      <fieldset class="flach">
+        <legend>Bereich</legend>
+        <label class="haken"><input type="radio" name="v-bereich" value="ganz" checked> Ganzes Stück</label>
+        <label class="haken"><input type="radio" name="v-bereich" value="schleife" id="v-bereich-schleife"> Nur die geübten Takte</label>
+      </fieldset>
+      <p class="leise" id="v-info"></p>
+      <div class="video-knoepfe">
+        <button id="v-start" class="knopf primaer" type="button">Aufnahme starten</button>
+        <button id="v-abbrechen" class="knopf" type="button" hidden>Abbrechen</button>
+        <a id="v-download" class="knopf primaer" hidden>Video herunterladen</a>
+      </div>
+      <progress id="v-fortschritt" max="1" value="0" hidden></progress>
+      <p id="v-status" class="leise"></p>
+    </div>
+    <div id="v-buehne" class="video-buehne" aria-label="Vorschau des Videos"></div>
+  </div>
+</dialog>
+
+<div id="ablage" class="ablage" hidden><div>Datei hier ablegen</div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="unsichtbar" aria-hidden="true"></div>
+
+<script src="vendor/opensheetmusicdisplay.min.js"></script>
+<script src="js/beispiele.js"></script>
+<script src="js/klavier-samples.js"></script>
+<script src="js/fingersatz.js"></script>
+<script src="js/midi.js"></script>
+<script src="js/partitur.js"></script>
+<script src="js/klang.js"></script>
+<script src="js/spieler.js"></script>
+<script src="js/wasserfall.js"></script>
+<script src="js/video.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
